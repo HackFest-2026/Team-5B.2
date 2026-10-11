@@ -112,3 +112,77 @@ def test_gate_review_required_condition():
     # Should trigger REVIEW_REQUIRED due to exceeding the 3% gap tolerance
     assert report.status in (ValidationStatus.REVIEW_REQUIRED, ValidationStatus.FAIL)
     assert report.probability_gap > 0.03
+
+
+def test_validation_checks_detect_deliberate_failures():
+    """
+    Verify that each of the individual validation check functions catches
+    a deliberately failing case.
+    """
+    from customer_agent_sim.decision_policy import StandardDecisionPolicy
+    from customer_agent_sim.population import PopulationGenerator
+    from customer_agent_sim.validation import (
+        validate_behavioural_consistency,
+        validate_population_heterogeneity,
+        validate_scenario_robustness,
+        validate_ranking_stability,
+    )
+
+    gen = PopulationGenerator()
+    pop = gen.generate(size=300, seed=42)
+
+    # 1. Check A: Inverted decision policy violating price monotonicity
+    class InvertedDemandPolicy(StandardDecisionPolicy):
+        def calculate_probabilities(self, agent, offer):
+            # Higher price strictly yields higher purchase probability
+            p_buy = min(1.0, max(0.0, offer.price / 300.0))
+            return p_buy, 0.0, 1.0 - p_buy, 1.0, 0.0
+
+    res_consistency = validate_behavioural_consistency(
+        population=pop,
+        offer=Offer(price=100.0, base_price=100.0, perceived_value=120.0),
+        policy=InvertedDemandPolicy(),
+    )
+    assert res_consistency["passed"] is False
+    assert res_consistency["checks"]["price_monotonicity"]["passed"] is False
+    assert len(res_consistency["diagnostics"]) > 0
+
+    # 2. Check B: Artificially cloned population violating heterogeneity
+    cloned_pop = [pop[0].with_state_update() for _ in range(100)]
+    for a in cloned_pop:
+        a.traits.decision_noise = 0.05
+    res_heterogeneity = validate_population_heterogeneity(
+        population=cloned_pop,
+        offer=Offer(price=100.0, base_price=100.0, perceived_value=120.0),
+        min_variance=0.002,
+    )
+    assert res_heterogeneity["passed"] is False
+    assert res_heterogeneity["probability_variance"] < 0.001
+    assert res_heterogeneity["warning"] is not None
+
+    # 3. Check C: Fragile offer collapsing under scenario stress
+    fragile_offer = Offer(price=145.0, base_price=100.0, perceived_value=110.0)
+    res_scenario = validate_scenario_robustness(
+        population=pop,
+        offer=fragile_offer,
+        scenarios=["budget_squeeze"],
+        min_conversion_threshold=0.05,
+    )
+    assert (not res_scenario["passed"]) or (len(res_scenario["vulnerabilities"]) > 0)
+
+    # 4. Check D: Suboptimal candidate failing ranking stability
+    subopt_offer = Offer(price=150.0, base_price=100.0, perceived_value=110.0, unit_cost=40.0)
+    res_ranking = validate_ranking_stability(
+        population=pop,
+        candidate_prices=[80.0, 90.0, 100.0, 150.0],
+        base_offer=subopt_offer,
+        tolerance_rank_drop=1,
+        tolerance_profit_gap=0.05,
+    )
+    assert res_ranking["passed"] is False
+    assert (not res_ranking["rank_drop_passed"]) or (not res_ranking["gap_passed"])
+
+    # 5. Check E: Severe ML discrepancy
+    res_disc = validate_ml_discrepancy(ml_probability=0.95, sim_conversion=0.10, max_allowed_gap=0.15)
+    assert res_disc["severe_discrepancy"] is True
+    assert res_disc["gap_exceeded"] is True
