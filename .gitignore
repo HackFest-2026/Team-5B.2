@@ -1,0 +1,25 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environments and secrets
+.env
+.env.*
+venv/
+env/
+ENV/
+
+# Output and runtime artifacts
+output/
+output_*/
+ml/artifacts/*.pkl
+*.log
+
+# OS metadata
+.DS_Store
+Thumbs.db
