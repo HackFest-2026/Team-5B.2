@@ -152,7 +152,7 @@ For a given `Offer`, each agent evaluates choice probabilities through an interp
 9. **Total Latent Buy Utility**:
    $$U_{\text{buy}} = 0.20 + U_{\text{surplus}} + U_{\text{price}} + U_{\text{budget}} + U_{\text{comp}} + U_{\text{urgency}} + U_{\text{risk}}$$
 10. **Latent Defer Utility**:
-    $$U_{\text{defer}} = -0.50 + \text{traits.patience} \times 1.20 - (\text{offer.urgency} \times 2.0 + \text{offer.scarcity} \times 1.5) - 0.5 \times \text{state.need\_intensity} - 0.5 \times |r - 1.0|$$
+    $$U_{\text{defer}} = -0.50 + \text{traits.patience} \times 1.20 - (\text{offer.urgency} \times 2.20 + \text{offer.scarcity} \times 1.80) - 0.5 \times \text{state.need\_intensity} - 0.60 \times |r - 1.0|$$
 11. **Multinomial Logit Choice Probabilities**:
     With temperature $\tau = \max(0.05, \text{traits.decision\_noise})$ and baseline reject utility $U_{\text{reject}} = 0$:
     $$D = 1.0 + \exp\left(\frac{U_{\text{buy}}}{\tau}\right) + \exp\left(\frac{U_{\text{defer}}}{\tau}\right)$$
@@ -196,7 +196,7 @@ When comparing multiple candidate prices or scenario variations, `runner.py` use
 - This isolates the effect of price changes from Monte Carlo sampling noise, drastically reducing variance in candidate rank ordering.
 
 ### Shared Population Reuse for Batch Performance
-Generating 1,000 agents takes approximately 80–120ms. In high-throughput quoting, callers can generate a population once and pass it across multiple validations via `population=shared_population`, reducing per-quote evaluation time to under 15ms.
+Generating 1,000 agents takes approximately 25–35ms. In high-throughput quoting, callers can generate a population once and pass it across multiple validations via `population=shared_population`. While a single offer simulation pass takes ~35–40ms at $N=1,000$, the full `validate_offer` workflow executes ~23 multi-scenario and candidate simulation passes (~260ms at $N=250$, ~1.0s at $N=1,000$). Reusing a shared population eliminates redundant initialization overhead across concurrent evaluations.
 
 ---
 
@@ -205,8 +205,8 @@ Generating 1,000 agents takes approximately 80–120ms. In high-throughput quoti
 ### Check A: Behavioural Consistency (`validate_behavioural_consistency`)
 Verifies basic economic axioms on the offer:
 1. **Price Ladder Monotonicity**: Evaluates the offer across relative multipliers $[0.8, 0.9, 1.0, 1.1, 1.2] \times \text{price}$. Verifies that simulated conversion does not systematically increase as price increases:
-   $$\text{conv}_{i+1} \le \text{conv}_i + 0.02 \quad (\text{tolerance allowance for noise})$$
-2. **Value Sensitivity**: Evaluates offer with $1.2 \times \text{perceived\_value}$. Verifies conversion increases or holds:
+   $$\text{conv}_{i+1} \le \text{conv}_i + 0.03 \quad (\text{tolerance allowance for Monte Carlo noise})$$
+2. **Value Sensitivity**: Evaluates offer with $1.30 \times \text{perceived\_value}$ (+30% boost). Verifies conversion increases or holds:
    $$\text{conv}_{\text{boosted}} \ge \text{conv}_{\text{base}} - 0.02$$
 3. **Competitor Sensitivity**: If `competitor_price` is present, evaluates offer with competitor discount ($0.8 \times \text{competitor\_price}$) and asserts conversion responds plausibly.
 4. **Urgency & Scarcity Sensitivity**: Evaluates offer with $\text{urgency}=0.85$ and $\text{scarcity}=0.85$, checking for non-negative conversion response.
@@ -219,7 +219,7 @@ Ensures customer traits produce meaningful variance rather than a cloned cohort:
    $$\text{Var}(P_{\text{buy}}) = \frac{1}{N - 1} \sum_{i=1}^N (P_{\text{buy}, i} - \bar{P}_{\text{buy}})^2 \ge \text{min\_heterogeneity\_variance} \quad (\text{default: } 0.002)$$
 2. Partitions population into subgroups via median trait split on `price_sensitivity` (at 0.50 quantile); measures conversion difference $\Delta = \text{conv}_{\text{low\_ps}} - \text{conv}_{\text{high\_ps}}$.
 
-*Failure Condition*: $\text{Var}(P_{\text{buy}}) < 0.0005$ triggers `FAIL` (cloned population). $0.0005 \le \text{Var} < 0.002$ triggers a warning.
+*Diagnostic Output*: If $\text{Var}(P_{\text{buy}}) < \text{min\_heterogeneity\_variance}$ (or $< 0.0005$), a warning is recorded in `report.warnings` indicating a cloned or degenerate cohort. (Heterogeneity variance informs diagnostic warnings rather than directly forcing a hard gate `FAIL`).
 
 ### Check C: Scenario Robustness (`validate_scenario_robustness`)
 Re-evaluates the recommended price under market shifts using the **exact same customer population**:
@@ -268,7 +268,7 @@ $$\text{gap} = |p_{\text{ML}} - \text{conv}_{\text{sim}}|$$
 | **Missing Unit Cost** (`unit_cost = None`) | Candidate evaluation automatically falls back to expected revenue: $E[\text{Revenue}] = \text{price} \times \text{sim\_conversion}$. Ranking metric is labeled `"revenue"`. Does not crash with `TypeError`. |
 | **Single Candidate Price** (`candidate_prices = None` or `len <= 1`) | Single-price mode: `validate_ranking_stability` returns `{"available": False, "reason": "Single-price validation: no candidate alternatives provided."}` Validation proceeds smoothly through the other four checks without failing. |
 | **Invalid / Non-Finite Inputs** | `Offer` raises `ValueError` on non-positive prices, non-positive base price, non-positive perceived value, out-of-range urgency/scarcity, or negative unit cost. `ml_probability` must be in $[0.0, 1.0]$. In shadow mode, `run_shadow_validation` catches these exceptions and returns status `"ERROR"`. |
-| **Degenerate / Cloned Population** | If population choice variance $\text{Var}(P_{\text{buy}}) < 0.0005$, `validate_population_heterogeneity` flags variance collapse, triggering `FAIL`. |
+| **Degenerate / Cloned Population** | If population choice variance $\text{Var}(P_{\text{buy}}) < 0.0005$, `validate_population_heterogeneity` flags variance collapse and appends a warning to `report.warnings` diagnostic output. |
 | **Confidence-Interval Boundaries** | Uses Wilson score interval with continuity properties. If $\text{ci\_upper} < \text{minimum\_simulated\_conversion}$, conversion is definitively below safety threshold $\to$ `FAIL`. If point estimate $\ge \text{threshold}$ but $\text{ci\_lower} < \text{threshold}$, conversion is borderline $\to$ `REVIEW_REQUIRED`. |
 | **Ranking Ties & Negative Margins** | When all candidate profits are negative or zero, `metric_gap` handles division by zero safely using $\max(|\text{best\_metric}|, \epsilon)$. Ties in candidate metrics are broken deterministically by price proximity to base price, then lower price. |
 | **Simulator Exceptions** | Wrapped in `try...except Exception as exc:` inside `run_shadow_validation`. Catches any unexpected Monte Carlo or runtime error, logs via `logger.error`, and returns a safe dictionary with `status: "ERROR"` and `error: str(exc)`. Pricing and checkout eligibility are never blocked. |
@@ -609,4 +609,4 @@ python customer_agent_sim/examples/run_demo.py
 4. **Production Parameter Calibration**:
    Before transitioning from shadow mode to active gating, behavioral coefficients (`price_sensitivity_weight`, `loss_aversion_factor`, `budget_penalty_weight`, `loyalty`) should be calibrated against empirical transaction telemetry, price elasticity studies, or holdout A/B testing data.
 5. **Computational Latency**:
-   Simulating 1,000 agents requires approximately 80–120ms per candidate. For latency-sensitive synchronous workflows, set `validation_population_size=250` or pass a pre-generated population (`population=shared_population`) to maintain sub-15ms latency.
+   Simulating a single offer on 1,000 agents takes ~35–40ms. The full validation suite runs approximately 23 simulation passes (price ladder, sensitivity, 4 robustness scenarios, heterogeneity splits, and candidate grid evaluations), totalling ~260ms for $N=250$ and ~1,000ms for $N=1,000$. For latency-sensitive synchronous workflows, set `validation_population_size=250` or configure candidate evaluations appropriately.

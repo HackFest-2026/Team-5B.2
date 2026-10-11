@@ -112,9 +112,9 @@ class StandardDecisionPolicy(BaseDecisionPolicy):
 
     10. Latent Defer Utility:
         U_defer = defer_intercept + traits.patience * patience_weight
-                  - (offer.urgency * 2.0 + offer.scarcity * 1.5)
+                  - (offer.urgency * 2.2 + offer.scarcity * 1.8)
                   - 0.5 * state.need_intensity
-                  - 0.5 * abs(r - 1.0)
+                  - 0.6 * abs(r - 1.0)
 
     11. Multinomial Logit Softmax with Decision Noise (tau):
         tau = max(0.05, traits.decision_noise)
