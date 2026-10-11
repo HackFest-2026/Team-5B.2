@@ -1,0 +1,16 @@
+{
+  "intercept": -0.4,
+  "log_price_ratio": -3.8,
+  "price_vs_competitor": -1.4,
+  "customer_sensitivity": -1.0,
+  "price_x_sensitivity": -2.8,
+  "loyalty_score": 1.2,
+  "urgency_score": 1.5,
+  "scarcity_score": 0.9,
+  "demand_pressure": 0.4,
+  "competitor_density": -0.6,
+  "is_promotion_active": 0.7,
+  "time_decay_factor": 0.8,
+  "perceived_value_gap": 1.8,
+  "noise_scale": 0.45
+}

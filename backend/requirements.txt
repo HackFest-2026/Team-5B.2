@@ -1,0 +1,23 @@
+# Monetize360 backend — Python 3.13. Versions pinned to what the test suite ran against.
+fastapi==0.143.0
+uvicorn[standard]==0.54.0
+pydantic==2.14.0
+pydantic-settings==2.15.0
+SQLAlchemy==2.1.4
+alembic==1.20.0
+python-dotenv==1.2.4
+httpx==0.28.1
+
+# ML optimizer (ml_updated). scikit-learn MUST match the version the pickles were trained with (1.6.1).
+scikit-learn==1.6.1
+numpy==2.5.4
+pandas==3.0.6
+joblib==1.6.0
+
+# LLM providers (only used when an API key is configured; the mock generator needs neither)
+google-genai==2.29.0
+openai==3.28.0
+
+# Tests
+pytest==9.1.1
+pytest-asyncio==1.4.0

@@ -1,0 +1,53 @@
+{
+  "domain": {
+    "id": "banking",
+    "name": "Retail Banking",
+    "description": "Synthetic demo data: retail lending products priced as an annual interest rate. The 'price' is the rate and the 'cost' is the bank's funding and risk cost rate. Illustrative values only.",
+    "currency": "INR",
+    "output_unit": { "label": "% p.a. interest rate", "prefix": "", "suffix": "%", "decimals": 2 },
+    "product_noun": "Lending product",
+    "pipeline": ["market", "risk", "relationship"],
+    "attributes": [
+      { "key": "competitor_rate", "label": "Competitor rate", "type": "number", "source": "inventory", "unit": "% p.a.", "semantic": "competitorPrice", "stage": "market" },
+      { "key": "rate_gap_pp", "label": "Competitor gap vs our base (pp)", "type": "number", "source": "computed", "expression": "competitor_rate - base_price", "stage": "market", "description": "Negative = competitors lend cheaper than our base rate" },
+      { "key": "demand_index", "label": "Loan demand index", "type": "number", "source": "inventory", "min": 0, "max": 100, "default": 50, "semantic": "demandPressure", "normalize": { "min": 0, "max": 100, "target_range": [0.2, 2.0] }, "stage": "market" },
+      { "key": "credit_score", "label": "Credit score", "type": "number", "source": "request", "customer_input": true, "min": 300, "max": 900, "default": 720, "semantic": "risk", "normalize": { "min": 300, "max": 900, "invert": true }, "stage": "risk" },
+      { "key": "amount", "label": "Amount requested", "type": "number", "source": "request", "customer_input": true, "unit": "INR", "min": 10000, "max": 50000000, "default": 500000, "stage": "risk" },
+      { "key": "tenure_months", "label": "Tenure (months)", "type": "number", "source": "request", "customer_input": true, "min": 6, "max": 360, "default": 36, "stage": "risk" },
+      { "key": "debt_to_income", "label": "Debt-to-income (%)", "type": "number", "source": "profile", "min": 0, "max": 100, "default": 30, "stage": "risk" },
+      { "key": "relationship_years", "label": "Years as a customer", "type": "number", "source": "profile", "min": 0, "max": 60, "default": 0, "semantic": "customerLoyalty", "normalize": { "min": 0, "max": 10 }, "stage": "relationship" },
+      { "key": "salary_account", "label": "Salary account with us", "type": "boolean", "source": "profile", "default": false, "stage": "relationship" }
+    ],
+    "products": [
+      { "id": "PERSONAL", "name": "Personal loan", "base_price": 12.5, "cost": 7.4, "previous_price": 12.5, "inventory": { "competitor_rate": 11.99, "demand_index": 68 } },
+      { "id": "AUTO", "name": "Auto loan", "base_price": 9.4, "cost": 6.6, "previous_price": 9.5, "inventory": { "competitor_rate": 9.25, "demand_index": 55 } },
+      { "id": "HOME", "name": "Home loan", "base_price": 8.6, "cost": 6.3, "previous_price": 8.6, "inventory": { "competitor_rate": 8.5, "demand_index": 40 } }
+    ],
+    "defaults": { "customerSensitivity": 0.7, "competitorDensity": 0.9, "urgency": 0.3 }
+  },
+  "strategy": {
+    "domain_id": "banking",
+    "name": "Risk-based lending rates",
+    "objective_text": "Price for risk: better rates for strong credit and low debt, a premium for weaker credit. Stay competitive where rivals lend cheaper, reward long-standing and salary-account customers, and never price below our funding and risk cost plus a 25% markup or above the 24% regulatory cap.",
+    "rules": [
+      { "id": "BK-MATCH", "name": "Competitors lend cheaper", "condition": { "attr": "rate_gap_pp", "op": "<", "value": -0.25 }, "action": { "type": "fixed", "value": -0.25 }, "priority": 10, "stage": "market", "customer_message": "Competitive market rate." },
+      { "id": "BK-PRIME", "name": "Excellent credit", "condition": { "attr": "credit_score", "op": ">=", "value": 780 }, "action": { "type": "fixed", "value": -0.75 }, "priority": 10, "stage": "risk", "customer_message": "Excellent credit score." },
+      { "id": "BK-SUBPRIME", "name": "Weaker credit", "condition": { "attr": "credit_score", "op": "<", "value": 650 }, "action": { "type": "fixed", "value": 1.5 }, "priority": 20, "stage": "risk", "customer_message": "Rate reflects your credit profile." },
+      { "id": "BK-DTI", "name": "High debt-to-income", "condition": { "attr": "debt_to_income", "op": ">", "value": 45 }, "action": { "type": "fixed", "value": 1.0 }, "priority": 30, "stage": "risk" },
+      { "id": "BK-LARGE", "name": "Large amount", "condition": { "attr": "amount", "op": ">=", "value": 2000000 }, "action": { "type": "fixed", "value": -0.25 }, "priority": 40, "stage": "risk", "customer_message": "Large-loan rate." },
+      { "id": "BK-LONG", "name": "Long tenure", "condition": { "attr": "tenure_months", "op": ">", "value": 120 }, "action": { "type": "fixed", "value": 0.2 }, "priority": 50, "stage": "risk" },
+      { "id": "BK-LOYAL", "name": "Long-standing customer", "condition": { "attr": "relationship_years", "op": ">=", "value": 5 }, "action": { "type": "fixed", "value": -0.25 }, "priority": 10, "stage": "relationship", "customer_message": "Loyalty benefit." },
+      { "id": "BK-SALARY", "name": "Salary account", "condition": { "attr": "salary_account", "op": "==", "value": true }, "action": { "type": "fixed", "value": -0.15 }, "priority": 20, "stage": "relationship", "customer_message": "Salary account benefit." }
+    ],
+    "constraints": [
+      { "type": "markup_floor", "value": 25 },
+      { "type": "ceiling", "value": 24 },
+      { "type": "max_increase", "value": 30 },
+      { "type": "max_discount", "value": 15 },
+      { "type": "rounding", "value": 0.05 }
+    ],
+    "conflict_policy": { "mode": "stack", "combine": "additive" },
+    "candidate_policy": { "count": 5, "offsets_pct": [-6, -3, 0, 3, 6], "include_base_price": true, "include_bound_pins": true, "show_alternatives": false },
+    "optimizer_policy": { "objective": "max_expected_profit", "conversion_floor": 0.10 }
+  }
+}

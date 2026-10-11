@@ -1,0 +1,48 @@
+{
+  "domain": {
+    "id": "gpu-compute",
+    "name": "GPU Compute",
+    "description": "Synthetic demo data: cloud accelerator capacity priced per GPU-hour. Utilization and competitor prices are illustrative, not a live market feed.",
+    "currency": "USD",
+    "output_unit": { "label": "USD per GPU-hour", "prefix": "$", "suffix": " /GPU-hr", "decimals": 2 },
+    "product_noun": "Instance type",
+    "pipeline": ["capacity", "commitment", "customer"],
+    "attributes": [
+      { "key": "utilization", "label": "Cluster utilization", "type": "number", "source": "inventory", "unit": "%", "min": 0, "max": 100, "default": 60, "semantic": "capacityUtilization", "normalize": { "min": 0, "max": 100 }, "stage": "capacity" },
+      { "key": "available_gpus", "label": "Available GPUs", "type": "number", "source": "inventory", "min": 0, "max": 10000, "default": 32, "semantic": "scarcity", "normalize": { "min": 0, "max": 64, "invert": true }, "stage": "capacity" },
+      { "key": "queue_demand", "label": "Queue demand index", "type": "number", "source": "inventory", "min": 0, "max": 100, "default": 50, "semantic": "demandPressure", "normalize": { "min": 0, "max": 100, "target_range": [0.2, 2.0] } },
+      { "key": "competitor_hourly", "label": "Competitor hourly price", "type": "number", "source": "inventory", "unit": "USD", "semantic": "competitorPrice" },
+      { "key": "commitment", "label": "Commitment", "type": "enum", "source": "request", "customer_input": true, "allowed_values": ["on_demand", "reserved_1m", "reserved_12m"], "default": "on_demand", "stage": "commitment" },
+      { "key": "hours", "label": "Hours requested", "type": "number", "source": "request", "customer_input": true, "min": 1, "max": 720, "default": 8, "stage": "commitment" },
+      { "key": "promo_active", "label": "Promotion running", "type": "boolean", "source": "inventory", "default": false, "semantic": "promotionActive", "stage": "customer" }
+    ],
+    "products": [
+      { "id": "ACC-A", "name": "Accelerator A (80 GB)", "base_price": 2.40, "cost": 1.10, "previous_price": 2.40, "inventory": { "utilization": 72, "available_gpus": 20, "queue_demand": 60, "competitor_hourly": 2.55 } },
+      { "id": "ACC-B", "name": "Accelerator B (80 GB, next-gen)", "base_price": 4.20, "cost": 2.00, "previous_price": 4.10, "inventory": { "utilization": 91, "available_gpus": 4, "queue_demand": 88, "competitor_hourly": 4.60 } },
+      { "id": "ACC-C", "name": "Inference card (24 GB)", "base_price": 0.80, "cost": 0.35, "previous_price": 0.80, "inventory": { "utilization": 35, "available_gpus": 120, "queue_demand": 25, "competitor_hourly": 0.75, "promo_active": true } }
+    ],
+    "defaults": { "customerSensitivity": 0.4, "competitorDensity": 0.7 }
+  },
+  "strategy": {
+    "domain_id": "gpu-compute",
+    "name": "Utilization-based compute pricing",
+    "objective_text": "Charge more when the cluster is nearly full or capacity is scarce, discount spare capacity and longer commitments, and always keep at least a 30% markup over cost.",
+    "rules": [
+      { "id": "G-UTIL-HI", "name": "High utilization uplift", "condition": { "attr": "utilization", "op": ">=", "value": 85 }, "action": { "type": "percent", "value": 15 }, "priority": 10, "stage": "capacity", "customer_message": "High demand on this hardware right now." },
+      { "id": "G-UTIL-LO", "name": "Spare capacity discount", "condition": { "attr": "utilization", "op": "<", "value": 40 }, "action": { "type": "percent", "value": -10 }, "priority": 20, "stage": "capacity", "customer_message": "Spare capacity discount." },
+      { "id": "G-SCARCE", "name": "Scarce capacity", "condition": { "attr": "available_gpus", "op": "<", "value": 8 }, "action": { "type": "percent", "value": 5 }, "priority": 30, "stage": "capacity", "customer_message": "Limited capacity available." },
+      { "id": "G-RESERVED", "name": "Commitment discount", "condition": { "attr": "commitment", "op": "not_in", "value": ["on_demand"] }, "action": { "type": "percent", "value": -12 }, "priority": 10, "stage": "commitment", "customer_message": "Commitment discount." },
+      { "id": "G-LONG", "name": "Volume discount", "condition": { "attr": "hours", "op": ">=", "value": 168 }, "action": { "type": "percent", "value": -5 }, "priority": 20, "stage": "commitment", "customer_message": "Volume discount." },
+      { "id": "G-PROMO", "name": "Promotion", "condition": { "attr": "promo_active", "op": "==", "value": true }, "action": { "type": "percent", "value": -5 }, "priority": 10, "stage": "customer", "customer_message": "Promotional pricing." }
+    ],
+    "constraints": [
+      { "type": "markup_floor", "value": 30 },
+      { "type": "ceiling", "value": 6.0 },
+      { "type": "max_increase", "value": 25 },
+      { "type": "max_discount", "value": 25 },
+      { "type": "rounding", "value": 0.05 }
+    ],
+    "conflict_policy": { "mode": "first_match_per_stage", "combine": "multiplicative" },
+    "optimizer_policy": { "objective": "max_expected_profit", "conversion_floor": 0.10 }
+  }
+}

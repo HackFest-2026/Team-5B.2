@@ -1,0 +1,55 @@
+{
+  "pipeline": "domain_agnostic_v2",
+  "training_completed": true,
+  "data": {
+    "total_rows": 400000,
+    "train_rows": 279999,
+    "val_rows": 60000,
+    "test_rows": 60001,
+    "purchase_rate": 0.65931
+  },
+  "features": {
+    "count": 14,
+    "names": [
+      "price_ratio",
+      "log_price_ratio",
+      "price_vs_competitor",
+      "margin_ratio",
+      "price_rank_normalized",
+      "customer_sensitivity",
+      "customer_loyalty_score",
+      "urgency_score",
+      "scarcity_score",
+      "demand_pressure",
+      "competitor_density",
+      "is_promotion_active",
+      "time_decay_factor",
+      "perceived_value_gap"
+    ],
+    "domain_specific": "NONE",
+    "all_numeric": true
+  },
+  "models": {
+    "lr_baseline": {
+      "class": "LogisticRegression",
+      "val_auc": 0.8059,
+      "val_accuracy": 0.7233,
+      "val_logloss": 0.5365,
+      "test_auc": 0.8084,
+      "test_accuracy": 0.7261
+    },
+    "gbt_primary": {
+      "class": "GradientBoostingClassifier",
+      "n_estimators": 300,
+      "max_depth": 5,
+      "learning_rate": 0.05,
+      "val_auc": 0.8054,
+      "val_accuracy": 0.7521,
+      "val_logloss": 0.4989,
+      "test_auc": 0.8072,
+      "test_accuracy": 0.756
+    },
+    "gbt_improvement_over_lr": -0.0012
+  },
+  "price_sensitivity": "VERIFIED -- P(buy) decreases monotonically with price"
+}

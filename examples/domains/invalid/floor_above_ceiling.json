@@ -1,0 +1,237 @@
+{
+  "domain": {
+    "id": "car-rental",
+    "name": "Car Rental",
+    "description": "Fourth-domain demo (not seeded): vehicle rentals priced per day, added purely through configuration. Synthetic values.",
+    "currency": "USD",
+    "output_unit": {
+      "label": "USD per day",
+      "prefix": "$",
+      "suffix": " /day",
+      "decimals": 0
+    },
+    "product_noun": "Vehicle class",
+    "pipeline": [
+      "fleet",
+      "trip",
+      "driver"
+    ],
+    "attributes": [
+      {
+        "key": "fleet_utilization",
+        "label": "Fleet utilization",
+        "type": "number",
+        "source": "inventory",
+        "unit": "%",
+        "min": 0,
+        "max": 100,
+        "default": 65,
+        "semantic": "capacityUtilization",
+        "normalize": {
+          "min": 0,
+          "max": 100
+        },
+        "stage": "fleet"
+      },
+      {
+        "key": "competitor_daily",
+        "label": "Competitor daily rate",
+        "type": "number",
+        "source": "inventory",
+        "unit": "USD",
+        "semantic": "competitorPrice"
+      },
+      {
+        "key": "pickup_date",
+        "label": "Pick-up date",
+        "type": "date",
+        "source": "request",
+        "customer_input": true,
+        "required": true
+      },
+      {
+        "key": "days_to_pickup",
+        "label": "Days to pick-up",
+        "type": "number",
+        "source": "computed",
+        "expression": "daysBetween(as_of, pickup_date)",
+        "semantic": "urgency",
+        "normalize": {
+          "min": 0,
+          "max": 30,
+          "invert": true
+        },
+        "stage": "trip"
+      },
+      {
+        "key": "rental_days",
+        "label": "Rental days",
+        "type": "number",
+        "source": "request",
+        "customer_input": true,
+        "min": 1,
+        "max": 60,
+        "default": 3,
+        "stage": "trip"
+      },
+      {
+        "key": "airport_pickup",
+        "label": "Airport pick-up",
+        "type": "boolean",
+        "source": "request",
+        "customer_input": true,
+        "default": false,
+        "stage": "trip"
+      },
+      {
+        "key": "driver_age",
+        "label": "Driver age",
+        "type": "number",
+        "source": "request",
+        "customer_input": true,
+        "min": 18,
+        "max": 99,
+        "default": 35,
+        "semantic": "risk",
+        "stage": "driver"
+      }
+    ],
+    "products": [
+      {
+        "id": "ECONOMY",
+        "name": "Economy",
+        "base_price": 45,
+        "cost": 20,
+        "inventory": {
+          "fleet_utilization": 70,
+          "competitor_daily": 48
+        }
+      },
+      {
+        "id": "SUV",
+        "name": "SUV",
+        "base_price": 80,
+        "cost": 38,
+        "inventory": {
+          "fleet_utilization": 90,
+          "competitor_daily": 85
+        }
+      },
+      {
+        "id": "PREMIUM",
+        "name": "Premium",
+        "base_price": 140,
+        "cost": 70,
+        "inventory": {
+          "fleet_utilization": 50,
+          "competitor_daily": 135
+        }
+      }
+    ]
+  },
+  "strategy": {
+    "domain_id": "car-rental",
+    "name": "Fleet-utilization pricing",
+    "objective_text": "Raise rates when the fleet is busy, discount weekly rentals, add a young-driver surcharge and an airport fee. Keep a 20% gross margin.",
+    "rules": [
+      {
+        "id": "CR-BUSY",
+        "name": "Busy fleet uplift",
+        "condition": {
+          "attr": "fleet_utilization",
+          "op": ">",
+          "value": 85
+        },
+        "action": {
+          "type": "percent",
+          "value": 12
+        },
+        "priority": 10,
+        "stage": "fleet",
+        "customer_message": "High demand for this vehicle class."
+      },
+      {
+        "id": "CR-WEEKLY",
+        "name": "Weekly rental",
+        "condition": {
+          "attr": "rental_days",
+          "op": ">=",
+          "value": 7
+        },
+        "action": {
+          "type": "percent",
+          "value": -10
+        },
+        "priority": 10,
+        "stage": "trip",
+        "customer_message": "Weekly rental discount."
+      },
+      {
+        "id": "CR-AIRPORT",
+        "name": "Airport fee",
+        "condition": {
+          "attr": "airport_pickup",
+          "op": "==",
+          "value": true
+        },
+        "action": {
+          "type": "percent",
+          "value": 8
+        },
+        "priority": 20,
+        "stage": "trip",
+        "customer_message": "Airport pick-up."
+      },
+      {
+        "id": "CR-YOUNG",
+        "name": "Young driver surcharge",
+        "condition": {
+          "attr": "driver_age",
+          "op": "<",
+          "value": 25
+        },
+        "action": {
+          "type": "fixed",
+          "value": 15
+        },
+        "priority": 10,
+        "stage": "driver",
+        "customer_message": "Young driver surcharge."
+      }
+    ],
+    "constraints": [
+      {
+        "type": "margin_floor",
+        "value": 20
+      },
+      {
+        "type": "max_increase",
+        "value": 25
+      },
+      {
+        "type": "max_discount",
+        "value": 20
+      },
+      {
+        "type": "rounding",
+        "value": 1
+      },
+      {
+        "type": "floor",
+        "value": 200
+      },
+      {
+        "type": "ceiling",
+        "value": 150
+      }
+    ],
+    "conflict_policy": {
+      "mode": "stack",
+      "combine": "multiplicative"
+    },
+    "optimizer_policy": {
+      "objective": "max_expected_profit",
+      "conversion_floor": 0.1
+    }
+  }
+}

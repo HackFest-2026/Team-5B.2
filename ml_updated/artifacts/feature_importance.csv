@@ -1,0 +1,15 @@
+feature,importance
+price_ratio,0.31794556072918634
+log_price_ratio,0.17156652953097237
+perceived_value_gap,0.16431655796693773
+price_vs_competitor,0.10297545339275158
+customer_loyalty_score,0.04684304430304992
+urgency_score,0.03464885666983179
+price_rank_normalized,0.027751750157603023
+is_promotion_active,0.025864168967048535
+customer_sensitivity,0.025173336827441852
+scarcity_score,0.01888984124646483
+time_decay_factor,0.018876144629778553
+competitor_density,0.018415229347442344
+margin_ratio,0.01781572387841285
+demand_pressure,0.008917802353078402

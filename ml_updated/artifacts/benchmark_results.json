@@ -1,0 +1,1012 @@
+{
+  "benchmark_summary": {
+    "total_optimizer_profit": 1765.82,
+    "total_base_price_profit": 1384.51,
+    "total_cost_plus_profit": 1292.23,
+    "total_max_conversion_profit": 1238.33,
+    "overall_lift_vs_base_price_pct": 27.54
+  },
+  "scenarios": {
+    "cloud_gpu_compute": {
+      "name": "Cloud & AI Infrastructure: High-End GPU Cluster (per hr)",
+      "base_price": 3.5,
+      "unit_cost": 1.2,
+      "candidates": [
+        {
+          "candidate_price": 2.5,
+          "unit_cost": 1.2,
+          "unit_margin": 1.3,
+          "margin_pct": 52.0,
+          "markup_pct": 108.3,
+          "p_buy": 0.9835,
+          "expected_profit": 1.28,
+          "expected_revenue": 2.46,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 3.0,
+          "unit_cost": 1.2,
+          "unit_margin": 1.8,
+          "margin_pct": 60.0,
+          "markup_pct": 150.0,
+          "p_buy": 0.9543,
+          "expected_profit": 1.72,
+          "expected_revenue": 2.86,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 3.5,
+          "unit_cost": 1.2,
+          "unit_margin": 2.3,
+          "margin_pct": 65.7,
+          "markup_pct": 191.7,
+          "p_buy": 0.8896,
+          "expected_profit": 2.05,
+          "expected_revenue": 3.11,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 4.0,
+          "unit_cost": 1.2,
+          "unit_margin": 2.8,
+          "margin_pct": 70.0,
+          "markup_pct": 233.3,
+          "p_buy": 0.782,
+          "expected_profit": 2.19,
+          "expected_revenue": 3.13,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "* WINNER -- Optimal Expected Profit"
+        },
+        {
+          "candidate_price": 4.5,
+          "unit_cost": 1.2,
+          "unit_margin": 3.3,
+          "margin_pct": 73.3,
+          "markup_pct": 275.0,
+          "p_buy": 0.5539,
+          "expected_profit": 1.83,
+          "expected_revenue": 2.49,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        }
+      ],
+      "optimizer": {
+        "price": 4.0,
+        "profit": 2.19,
+        "p_buy": 0.782
+      },
+      "baseline_base_price": {
+        "price": 3.5,
+        "profit": 2.05
+      },
+      "baseline_cost_plus_50": {
+        "price": 2.5,
+        "profit": 1.28
+      },
+      "baseline_max_conversion": {
+        "price": 2.5,
+        "profit": 1.28
+      },
+      "lift_vs_base_price_pct": 6.83,
+      "lift_vs_best_baseline_pct": 6.83
+    },
+    "airline_business_flight": {
+      "name": "Airlines: Last-Minute Business Class Seat",
+      "base_price": 450.0,
+      "unit_cost": 180.0,
+      "candidates": [
+        {
+          "candidate_price": 350.0,
+          "unit_cost": 180.0,
+          "unit_margin": 170.0,
+          "margin_pct": 48.6,
+          "markup_pct": 94.4,
+          "p_buy": 0.9862,
+          "expected_profit": 167.65,
+          "expected_revenue": 345.17,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 420.0,
+          "unit_cost": 180.0,
+          "unit_margin": 240.0,
+          "margin_pct": 57.1,
+          "markup_pct": 133.3,
+          "p_buy": 0.9689,
+          "expected_profit": 232.55,
+          "expected_revenue": 406.96,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 480.0,
+          "unit_cost": 180.0,
+          "unit_margin": 300.0,
+          "margin_pct": 62.5,
+          "markup_pct": 166.7,
+          "p_buy": 0.9231,
+          "expected_profit": 276.92,
+          "expected_revenue": 443.07,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 550.0,
+          "unit_cost": 180.0,
+          "unit_margin": 370.0,
+          "margin_pct": 67.3,
+          "markup_pct": 205.6,
+          "p_buy": 0.8316,
+          "expected_profit": 307.7,
+          "expected_revenue": 457.39,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "* WINNER -- Optimal Expected Profit"
+        },
+        {
+          "candidate_price": 620.0,
+          "unit_cost": 180.0,
+          "unit_margin": 440.0,
+          "margin_pct": 71.0,
+          "markup_pct": 244.4,
+          "p_buy": 0.6483,
+          "expected_profit": 285.26,
+          "expected_revenue": 401.95,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        }
+      ],
+      "optimizer": {
+        "price": 550.0,
+        "profit": 307.7,
+        "p_buy": 0.8316
+      },
+      "baseline_base_price": {
+        "price": 420.0,
+        "profit": 232.55
+      },
+      "baseline_cost_plus_50": {
+        "price": 350.0,
+        "profit": 167.65
+      },
+      "baseline_max_conversion": {
+        "price": 350.0,
+        "profit": 167.65
+      },
+      "lift_vs_base_price_pct": 32.32,
+      "lift_vs_best_baseline_pct": 32.32
+    },
+    "edtech_subscription": {
+      "name": "EdTech: Professional Upskilling Monthly Subscription",
+      "base_price": 39.99,
+      "unit_cost": 6.5,
+      "candidates": [
+        {
+          "candidate_price": 19.99,
+          "unit_cost": 6.5,
+          "unit_margin": 13.49,
+          "margin_pct": 67.5,
+          "markup_pct": 207.5,
+          "p_buy": 0.9769,
+          "expected_profit": 13.18,
+          "expected_revenue": 19.53,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 29.99,
+          "unit_cost": 6.5,
+          "unit_margin": 23.49,
+          "margin_pct": 78.3,
+          "markup_pct": 361.4,
+          "p_buy": 0.8369,
+          "expected_profit": 19.66,
+          "expected_revenue": 25.1,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "* WINNER -- Optimal Expected Profit"
+        },
+        {
+          "candidate_price": 39.99,
+          "unit_cost": 6.5,
+          "unit_margin": 33.49,
+          "margin_pct": 83.7,
+          "markup_pct": 515.2,
+          "p_buy": 0.2834,
+          "expected_profit": 9.49,
+          "expected_revenue": 11.33,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 49.99,
+          "unit_cost": 6.5,
+          "unit_margin": 43.49,
+          "margin_pct": 87.0,
+          "markup_pct": 669.1,
+          "p_buy": 0.0591,
+          "expected_profit": 2.57,
+          "expected_revenue": 2.96,
+          "status": "LOW_CONVERSION",
+          "notes": "Conversion 5.9% below min threshold (10%)",
+          "verdict": "REJECTED -- Low Conversion"
+        },
+        {
+          "candidate_price": 59.99,
+          "unit_cost": 6.5,
+          "unit_margin": 53.49,
+          "margin_pct": 89.2,
+          "markup_pct": 822.9,
+          "p_buy": 0.0286,
+          "expected_profit": 1.53,
+          "expected_revenue": 1.71,
+          "status": "EXCEEDS_CEILING",
+          "notes": "Exceeds price ceiling ($59.98)",
+          "verdict": "REJECTED -- Ceiling Exceeded"
+        }
+      ],
+      "optimizer": {
+        "price": 29.99,
+        "profit": 19.66,
+        "p_buy": 0.8369
+      },
+      "baseline_base_price": {
+        "price": 39.99,
+        "profit": 9.49
+      },
+      "baseline_cost_plus_50": {
+        "price": 19.99,
+        "profit": 13.18
+      },
+      "baseline_max_conversion": {
+        "price": 19.99,
+        "profit": 13.18
+      },
+      "lift_vs_base_price_pct": 107.17,
+      "lift_vs_best_baseline_pct": 49.17
+    },
+    "commercial_coworking": {
+      "name": "Commercial Real Estate: Dedicated Coworking Desk (per mo)",
+      "base_price": 450.0,
+      "unit_cost": 190.0,
+      "candidates": [
+        {
+          "candidate_price": 380.0,
+          "unit_cost": 190.0,
+          "unit_margin": 190.0,
+          "margin_pct": 50.0,
+          "markup_pct": 100.0,
+          "p_buy": 0.9219,
+          "expected_profit": 175.16,
+          "expected_revenue": 350.32,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 420.0,
+          "unit_cost": 190.0,
+          "unit_margin": 230.0,
+          "margin_pct": 54.8,
+          "markup_pct": 121.1,
+          "p_buy": 0.8543,
+          "expected_profit": 196.5,
+          "expected_revenue": 358.82,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 450.0,
+          "unit_cost": 190.0,
+          "unit_margin": 260.0,
+          "margin_pct": 57.8,
+          "markup_pct": 136.8,
+          "p_buy": 0.7783,
+          "expected_profit": 202.36,
+          "expected_revenue": 350.23,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "* WINNER -- Optimal Expected Profit"
+        },
+        {
+          "candidate_price": 490.0,
+          "unit_cost": 190.0,
+          "unit_margin": 300.0,
+          "margin_pct": 61.2,
+          "markup_pct": 157.9,
+          "p_buy": 0.6376,
+          "expected_profit": 191.27,
+          "expected_revenue": 312.4,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 540.0,
+          "unit_cost": 190.0,
+          "unit_margin": 350.0,
+          "margin_pct": 64.8,
+          "markup_pct": 184.2,
+          "p_buy": 0.4317,
+          "expected_profit": 151.09,
+          "expected_revenue": 233.11,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        }
+      ],
+      "optimizer": {
+        "price": 450.0,
+        "profit": 202.36,
+        "p_buy": 0.7783
+      },
+      "baseline_base_price": {
+        "price": 450.0,
+        "profit": 202.36
+      },
+      "baseline_cost_plus_50": {
+        "price": 380.0,
+        "profit": 175.16
+      },
+      "baseline_max_conversion": {
+        "price": 380.0,
+        "profit": 175.16
+      },
+      "lift_vs_base_price_pct": 0.0,
+      "lift_vs_best_baseline_pct": 0.0
+    },
+    "b2b_freight_logistics": {
+      "name": "B2B Logistics: Cross-Border Freight Forwarding (per pallet)",
+      "base_price": 850.0,
+      "unit_cost": 520.0,
+      "candidates": [
+        {
+          "candidate_price": 700.0,
+          "unit_cost": 520.0,
+          "unit_margin": 180.0,
+          "margin_pct": 25.7,
+          "markup_pct": 34.6,
+          "p_buy": 0.9239,
+          "expected_profit": 166.3,
+          "expected_revenue": 646.71,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 780.0,
+          "unit_cost": 520.0,
+          "unit_margin": 260.0,
+          "margin_pct": 33.3,
+          "markup_pct": 50.0,
+          "p_buy": 0.8469,
+          "expected_profit": 220.2,
+          "expected_revenue": 660.61,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 850.0,
+          "unit_cost": 520.0,
+          "unit_margin": 330.0,
+          "margin_pct": 38.8,
+          "markup_pct": 63.5,
+          "p_buy": 0.7104,
+          "expected_profit": 234.44,
+          "expected_revenue": 603.85,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 920.0,
+          "unit_cost": 520.0,
+          "unit_margin": 400.0,
+          "margin_pct": 43.5,
+          "markup_pct": 76.9,
+          "p_buy": 0.6298,
+          "expected_profit": 251.93,
+          "expected_revenue": 579.44,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "* WINNER -- Optimal Expected Profit"
+        },
+        {
+          "candidate_price": 1000.0,
+          "unit_cost": 520.0,
+          "unit_margin": 480.0,
+          "margin_pct": 48.0,
+          "markup_pct": 92.3,
+          "p_buy": 0.3908,
+          "expected_profit": 187.59,
+          "expected_revenue": 390.81,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        }
+      ],
+      "optimizer": {
+        "price": 920.0,
+        "profit": 251.93,
+        "p_buy": 0.6298
+      },
+      "baseline_base_price": {
+        "price": 850.0,
+        "profit": 234.44
+      },
+      "baseline_cost_plus_50": {
+        "price": 780.0,
+        "profit": 220.2
+      },
+      "baseline_max_conversion": {
+        "price": 700.0,
+        "profit": 166.3
+      },
+      "lift_vs_base_price_pct": 7.46,
+      "lift_vs_best_baseline_pct": 7.46
+    },
+    "case_a_below_cost_trap": {
+      "name": "ABNORMAL A: Below-Cost Pricing Trap (Suicide Discounting)",
+      "base_price": 100.0,
+      "unit_cost": 65.0,
+      "candidates": [
+        {
+          "candidate_price": 35.0,
+          "unit_cost": 65.0,
+          "unit_margin": -30.0,
+          "margin_pct": -85.7,
+          "markup_pct": -46.2,
+          "p_buy": 0.9823,
+          "expected_profit": -29.47,
+          "expected_revenue": 34.38,
+          "status": "DISQUALIFIED_LOSS",
+          "notes": "Price below unit cost ($65.00) -- business takes loss!",
+          "verdict": "REJECTED -- Sells at Loss"
+        },
+        {
+          "candidate_price": 48.0,
+          "unit_cost": 65.0,
+          "unit_margin": -17.0,
+          "margin_pct": -35.4,
+          "markup_pct": -26.2,
+          "p_buy": 0.9818,
+          "expected_profit": -16.69,
+          "expected_revenue": 47.13,
+          "status": "DISQUALIFIED_LOSS",
+          "notes": "Price below unit cost ($65.00) -- business takes loss!",
+          "verdict": "REJECTED -- Sells at Loss"
+        },
+        {
+          "candidate_price": 58.0,
+          "unit_cost": 65.0,
+          "unit_margin": -7.0,
+          "margin_pct": -12.1,
+          "markup_pct": -10.8,
+          "p_buy": 0.9801,
+          "expected_profit": -6.86,
+          "expected_revenue": 56.84,
+          "status": "DISQUALIFIED_LOSS",
+          "notes": "Price below unit cost ($65.00) -- business takes loss!",
+          "verdict": "REJECTED -- Sells at Loss"
+        },
+        {
+          "candidate_price": 68.0,
+          "unit_cost": 65.0,
+          "unit_margin": 3.0,
+          "margin_pct": 4.4,
+          "markup_pct": 4.6,
+          "p_buy": 0.9592,
+          "expected_profit": 2.88,
+          "expected_revenue": 65.22,
+          "status": "BELOW_MARGIN",
+          "notes": "Below min margin floor ($68.25)",
+          "verdict": "REJECTED -- Unsafe Margin"
+        },
+        {
+          "candidate_price": 82.0,
+          "unit_cost": 65.0,
+          "unit_margin": 17.0,
+          "margin_pct": 20.7,
+          "markup_pct": 26.2,
+          "p_buy": 0.8369,
+          "expected_profit": 14.23,
+          "expected_revenue": 68.63,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "* WINNER -- Optimal Expected Profit"
+        }
+      ],
+      "optimizer": {
+        "price": 82.0,
+        "profit": 14.23,
+        "p_buy": 0.8369
+      },
+      "baseline_base_price": {
+        "price": 82.0,
+        "profit": 14.23
+      },
+      "baseline_cost_plus_50": {
+        "price": 82.0,
+        "profit": 14.23
+      },
+      "baseline_max_conversion": {
+        "price": 82.0,
+        "profit": 14.23
+      },
+      "lift_vs_base_price_pct": 0.0,
+      "lift_vs_best_baseline_pct": 0.0
+    },
+    "case_b_extreme_price_gouging": {
+      "name": "ABNORMAL B: Extreme Gouging / Crisis Shortage (Up to 7x Base)",
+      "base_price": 50.0,
+      "unit_cost": 15.0,
+      "candidates": [
+        {
+          "candidate_price": 60.0,
+          "unit_cost": 15.0,
+          "unit_margin": 45.0,
+          "margin_pct": 75.0,
+          "markup_pct": 300.0,
+          "p_buy": 0.7112,
+          "expected_profit": 32.0,
+          "expected_revenue": 42.67,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "* WINNER -- Optimal Expected Profit"
+        },
+        {
+          "candidate_price": 120.0,
+          "unit_cost": 15.0,
+          "unit_margin": 105.0,
+          "margin_pct": 87.5,
+          "markup_pct": 700.0,
+          "p_buy": 0.1277,
+          "expected_profit": 13.41,
+          "expected_revenue": 15.33,
+          "status": "EXCEEDS_CEILING",
+          "notes": "Exceeds price ceiling ($75.00)",
+          "verdict": "REJECTED -- Ceiling Exceeded"
+        },
+        {
+          "candidate_price": 180.0,
+          "unit_cost": 15.0,
+          "unit_margin": 165.0,
+          "margin_pct": 91.7,
+          "markup_pct": 1100.0,
+          "p_buy": 0.1288,
+          "expected_profit": 21.26,
+          "expected_revenue": 23.19,
+          "status": "EXCEEDS_CEILING",
+          "notes": "Exceeds price ceiling ($75.00)",
+          "verdict": "REJECTED -- Ceiling Exceeded"
+        },
+        {
+          "candidate_price": 260.0,
+          "unit_cost": 15.0,
+          "unit_margin": 245.0,
+          "margin_pct": 94.2,
+          "markup_pct": 1633.3,
+          "p_buy": 0.1214,
+          "expected_profit": 29.75,
+          "expected_revenue": 31.57,
+          "status": "EXCEEDS_CEILING",
+          "notes": "Exceeds price ceiling ($75.00)",
+          "verdict": "REJECTED -- Ceiling Exceeded"
+        },
+        {
+          "candidate_price": 350.0,
+          "unit_cost": 15.0,
+          "unit_margin": 335.0,
+          "margin_pct": 95.7,
+          "markup_pct": 2233.3,
+          "p_buy": 0.109,
+          "expected_profit": 36.53,
+          "expected_revenue": 38.16,
+          "status": "EXCEEDS_CEILING",
+          "notes": "Exceeds price ceiling ($75.00)",
+          "verdict": "REJECTED -- Ceiling Exceeded"
+        }
+      ],
+      "optimizer": {
+        "price": 60.0,
+        "profit": 32.0,
+        "p_buy": 0.7112
+      },
+      "baseline_base_price": {
+        "price": 60.0,
+        "profit": 32.0
+      },
+      "baseline_cost_plus_50": {
+        "price": 60.0,
+        "profit": 32.0
+      },
+      "baseline_max_conversion": {
+        "price": 60.0,
+        "profit": 32.0
+      },
+      "lift_vs_base_price_pct": 0.0,
+      "lift_vs_best_baseline_pct": 0.0
+    },
+    "case_c_competitor_price_dumping": {
+      "name": "ABNORMAL C: Inverted Market (Competitor Dumping at 75% Discount)",
+      "base_price": 100.0,
+      "unit_cost": 40.0,
+      "candidates": [
+        {
+          "candidate_price": 60.0,
+          "unit_cost": 40.0,
+          "unit_margin": 20.0,
+          "margin_pct": 33.3,
+          "markup_pct": 50.0,
+          "p_buy": 0.8696,
+          "expected_profit": 17.39,
+          "expected_revenue": 52.18,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 75.0,
+          "unit_cost": 40.0,
+          "unit_margin": 35.0,
+          "margin_pct": 46.7,
+          "markup_pct": 87.5,
+          "p_buy": 0.6787,
+          "expected_profit": 23.76,
+          "expected_revenue": 50.9,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "* WINNER -- Optimal Expected Profit"
+        },
+        {
+          "candidate_price": 90.0,
+          "unit_cost": 40.0,
+          "unit_margin": 50.0,
+          "margin_pct": 55.6,
+          "markup_pct": 125.0,
+          "p_buy": 0.3437,
+          "expected_profit": 17.18,
+          "expected_revenue": 30.93,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 100.0,
+          "unit_cost": 40.0,
+          "unit_margin": 60.0,
+          "margin_pct": 60.0,
+          "markup_pct": 150.0,
+          "p_buy": 0.2051,
+          "expected_profit": 12.3,
+          "expected_revenue": 20.51,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 115.0,
+          "unit_cost": 40.0,
+          "unit_margin": 75.0,
+          "margin_pct": 65.2,
+          "markup_pct": 187.5,
+          "p_buy": 0.0793,
+          "expected_profit": 5.95,
+          "expected_revenue": 9.12,
+          "status": "LOW_CONVERSION",
+          "notes": "Conversion 7.9% below min threshold (10%)",
+          "verdict": "REJECTED -- Low Conversion"
+        }
+      ],
+      "optimizer": {
+        "price": 75.0,
+        "profit": 23.76,
+        "p_buy": 0.6787
+      },
+      "baseline_base_price": {
+        "price": 100.0,
+        "profit": 12.3
+      },
+      "baseline_cost_plus_50": {
+        "price": 60.0,
+        "profit": 17.39
+      },
+      "baseline_max_conversion": {
+        "price": 60.0,
+        "profit": 17.39
+      },
+      "lift_vs_base_price_pct": 93.17,
+      "lift_vs_best_baseline_pct": 36.63
+    },
+    "case_d_hyper_sensitive_cliff": {
+      "name": "ABNORMAL D: Hyper-Sensitive Bargain Hunter (Sensitivity = 1.0)",
+      "base_price": 50.0,
+      "unit_cost": 20.0,
+      "candidates": [
+        {
+          "candidate_price": 38.0,
+          "unit_cost": 20.0,
+          "unit_margin": 18.0,
+          "margin_pct": 47.4,
+          "markup_pct": 90.0,
+          "p_buy": 0.7996,
+          "expected_profit": 14.39,
+          "expected_revenue": 30.39,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "* WINNER -- Optimal Expected Profit"
+        },
+        {
+          "candidate_price": 44.0,
+          "unit_cost": 20.0,
+          "unit_margin": 24.0,
+          "margin_pct": 54.5,
+          "markup_pct": 120.0,
+          "p_buy": 0.4813,
+          "expected_profit": 11.55,
+          "expected_revenue": 21.18,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 48.0,
+          "unit_cost": 20.0,
+          "unit_margin": 28.0,
+          "margin_pct": 58.3,
+          "markup_pct": 140.0,
+          "p_buy": 0.2977,
+          "expected_profit": 8.34,
+          "expected_revenue": 14.29,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 52.0,
+          "unit_cost": 20.0,
+          "unit_margin": 32.0,
+          "margin_pct": 61.5,
+          "markup_pct": 160.0,
+          "p_buy": 0.1804,
+          "expected_profit": 5.77,
+          "expected_revenue": 9.38,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 58.0,
+          "unit_cost": 20.0,
+          "unit_margin": 38.0,
+          "margin_pct": 65.5,
+          "markup_pct": 190.0,
+          "p_buy": 0.0816,
+          "expected_profit": 3.1,
+          "expected_revenue": 4.73,
+          "status": "LOW_CONVERSION",
+          "notes": "Conversion 8.2% below min threshold (10%)",
+          "verdict": "REJECTED -- Low Conversion"
+        }
+      ],
+      "optimizer": {
+        "price": 38.0,
+        "profit": 14.39,
+        "p_buy": 0.7996
+      },
+      "baseline_base_price": {
+        "price": 48.0,
+        "profit": 8.34
+      },
+      "baseline_cost_plus_50": {
+        "price": 38.0,
+        "profit": 14.39
+      },
+      "baseline_max_conversion": {
+        "price": 38.0,
+        "profit": 14.39
+      },
+      "lift_vs_base_price_pct": 72.54,
+      "lift_vs_best_baseline_pct": 0.0
+    },
+    "case_e_monopoly_whale": {
+      "name": "ABNORMAL E: Monopoly Whale (Sensitivity = 0.0, Loyalty = 1.0)",
+      "base_price": 1000.0,
+      "unit_cost": 250.0,
+      "candidates": [
+        {
+          "candidate_price": 900.0,
+          "unit_cost": 250.0,
+          "unit_margin": 650.0,
+          "margin_pct": 72.2,
+          "markup_pct": 260.0,
+          "p_buy": 0.9796,
+          "expected_profit": 636.75,
+          "expected_revenue": 881.65,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 1100.0,
+          "unit_cost": 250.0,
+          "unit_margin": 850.0,
+          "margin_pct": 77.3,
+          "markup_pct": 340.0,
+          "p_buy": 0.9523,
+          "expected_profit": 809.44,
+          "expected_revenue": 1047.51,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 1300.0,
+          "unit_cost": 250.0,
+          "unit_margin": 1050.0,
+          "margin_pct": 80.8,
+          "markup_pct": 420.0,
+          "p_buy": 0.8549,
+          "expected_profit": 897.6,
+          "expected_revenue": 1111.31,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "* WINNER -- Optimal Expected Profit"
+        },
+        {
+          "candidate_price": 1450.0,
+          "unit_cost": 250.0,
+          "unit_margin": 1200.0,
+          "margin_pct": 82.8,
+          "markup_pct": 480.0,
+          "p_buy": 0.7087,
+          "expected_profit": 850.48,
+          "expected_revenue": 1027.67,
+          "status": "VIABLE",
+          "notes": "Within all business guardrails",
+          "verdict": "VIABLE -- Lower Expected Profit"
+        },
+        {
+          "candidate_price": 1600.0,
+          "unit_cost": 250.0,
+          "unit_margin": 1350.0,
+          "margin_pct": 84.4,
+          "markup_pct": 540.0,
+          "p_buy": 0.4324,
+          "expected_profit": 583.78,
+          "expected_revenue": 691.89,
+          "status": "EXCEEDS_CEILING",
+          "notes": "Exceeds price ceiling ($1500.00)",
+          "verdict": "REJECTED -- Ceiling Exceeded"
+        }
+      ],
+      "optimizer": {
+        "price": 1300.0,
+        "profit": 897.6,
+        "p_buy": 0.8549
+      },
+      "baseline_base_price": {
+        "price": 900.0,
+        "profit": 636.75
+      },
+      "baseline_cost_plus_50": {
+        "price": 900.0,
+        "profit": 636.75
+      },
+      "baseline_max_conversion": {
+        "price": 900.0,
+        "profit": 636.75
+      },
+      "lift_vs_base_price_pct": 40.97,
+      "lift_vs_best_baseline_pct": 40.97
+    },
+    "case_f_total_guardrail_failure": {
+      "name": "ABNORMAL F: Total Guardrail Disqualification (No Safe Price)",
+      "base_price": 100.0,
+      "unit_cost": 80.0,
+      "candidates": [
+        {
+          "candidate_price": 40.0,
+          "unit_cost": 80.0,
+          "unit_margin": -40.0,
+          "margin_pct": -100.0,
+          "markup_pct": -50.0,
+          "p_buy": 0.9853,
+          "expected_profit": -39.41,
+          "expected_revenue": 39.41,
+          "status": "DISQUALIFIED_LOSS",
+          "notes": "Price below unit cost ($80.00) -- business takes loss!",
+          "verdict": "NO VIABLE PRICE"
+        },
+        {
+          "candidate_price": 50.0,
+          "unit_cost": 80.0,
+          "unit_margin": -30.0,
+          "margin_pct": -60.0,
+          "markup_pct": -37.5,
+          "p_buy": 0.9851,
+          "expected_profit": -29.55,
+          "expected_revenue": 49.25,
+          "status": "DISQUALIFIED_LOSS",
+          "notes": "Price below unit cost ($80.00) -- business takes loss!",
+          "verdict": "NO VIABLE PRICE"
+        },
+        {
+          "candidate_price": 62.0,
+          "unit_cost": 80.0,
+          "unit_margin": -18.0,
+          "margin_pct": -29.0,
+          "markup_pct": -22.5,
+          "p_buy": 0.9829,
+          "expected_profit": -17.69,
+          "expected_revenue": 60.94,
+          "status": "DISQUALIFIED_LOSS",
+          "notes": "Price below unit cost ($80.00) -- business takes loss!",
+          "verdict": "NO VIABLE PRICE"
+        },
+        {
+          "candidate_price": 72.0,
+          "unit_cost": 80.0,
+          "unit_margin": -8.0,
+          "margin_pct": -11.1,
+          "markup_pct": -10.0,
+          "p_buy": 0.9587,
+          "expected_profit": -7.67,
+          "expected_revenue": 69.03,
+          "status": "DISQUALIFIED_LOSS",
+          "notes": "Price below unit cost ($80.00) -- business takes loss!",
+          "verdict": "NO VIABLE PRICE"
+        },
+        {
+          "candidate_price": 78.0,
+          "unit_cost": 80.0,
+          "unit_margin": -2.0,
+          "margin_pct": -2.6,
+          "markup_pct": -2.5,
+          "p_buy": 0.9399,
+          "expected_profit": -1.88,
+          "expected_revenue": 73.31,
+          "status": "DISQUALIFIED_LOSS",
+          "notes": "Price below unit cost ($80.00) -- business takes loss!",
+          "verdict": "NO VIABLE PRICE"
+        }
+      ],
+      "optimizer": {
+        "price": null,
+        "profit": 0.0,
+        "p_buy": null
+      },
+      "baseline_base_price": {
+        "price": null,
+        "profit": 0.0
+      },
+      "baseline_cost_plus_50": {
+        "price": null,
+        "profit": 0.0
+      },
+      "baseline_max_conversion": {
+        "price": null,
+        "profit": 0.0
+      },
+      "lift_vs_base_price_pct": 0.0,
+      "lift_vs_best_baseline_pct": 0.0
+    }
+  }
+}

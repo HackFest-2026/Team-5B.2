@@ -1,0 +1,69 @@
+[
+  {
+    "id": "budget_conscious",
+    "name": "Budget-conscious",
+    "description": "Has a tight budget and walks away when the price goes over it.",
+    "preferences": ["lowest total cost", "no surprises"],
+    "share": 0.2,
+    "cohort": [
+      { "trait": "budget_ratio", "op": "multiply", "value": 0.7 },
+      { "trait": "risk_aversion", "op": "multiply", "value": 1.2 }
+    ],
+    "ml_overrides": { "customer_sensitivity": 0.8, "customer_loyalty_score": 0.2, "urgency_score": 0.3 }
+  },
+  {
+    "id": "price_sensitive",
+    "name": "Price-sensitive",
+    "description": "Compares prices carefully and reacts strongly to any increase.",
+    "preferences": ["fair price", "price comparisons"],
+    "share": 0.2,
+    "cohort": [ { "trait": "price_sensitivity", "op": "multiply", "value": 1.7 } ],
+    "ml_overrides": { "customer_sensitivity": 0.9, "customer_loyalty_score": 0.2, "urgency_score": 0.3 }
+  },
+  {
+    "id": "loyal",
+    "name": "Loyal customer",
+    "description": "Prefers this brand and tolerates small premiums over competitors.",
+    "preferences": ["familiar brand", "recognition for loyalty"],
+    "share": 0.15,
+    "cohort": [ { "trait": "loyalty", "op": "set_range", "low": 1.8, "high": 2.5 } ],
+    "ml_overrides": { "customer_sensitivity": 0.35, "customer_loyalty_score": 0.9, "urgency_score": 0.4 }
+  },
+  {
+    "id": "urgent_buyer",
+    "name": "Urgent buyer",
+    "description": "Needs it now; time matters more than price.",
+    "preferences": ["availability", "speed"],
+    "share": 0.15,
+    "cohort": [
+      { "trait": "need_intensity", "op": "set_range", "low": 1.8, "high": 2.5 },
+      { "trait": "patience", "op": "multiply", "value": 0.5 }
+    ],
+    "ml_overrides": { "customer_sensitivity": 0.3, "customer_loyalty_score": 0.4, "urgency_score": 0.9 }
+  },
+  {
+    "id": "premium_seeker",
+    "name": "Premium-seeking",
+    "description": "Values quality and is happy to pay more for it.",
+    "preferences": ["quality", "extras"],
+    "share": 0.1,
+    "cohort": [
+      { "trait": "value_orientation", "op": "set_range", "low": 1.6, "high": 2.4 },
+      { "trait": "budget_ratio", "op": "multiply", "value": 1.8 },
+      { "trait": "price_sensitivity", "op": "multiply", "value": 0.6 }
+    ],
+    "ml_overrides": { "customer_sensitivity": 0.2, "customer_loyalty_score": 0.5, "urgency_score": 0.4 }
+  },
+  {
+    "id": "deal_seeker",
+    "name": "Deal-seeker",
+    "description": "Happy to wait for a discount and quick to defer.",
+    "preferences": ["discounts", "limited-time offers"],
+    "share": 0.2,
+    "cohort": [
+      { "trait": "patience", "op": "set_range", "low": 1.6, "high": 2.5 },
+      { "trait": "price_sensitivity", "op": "multiply", "value": 1.6 }
+    ],
+    "ml_overrides": { "customer_sensitivity": 0.85, "customer_loyalty_score": 0.25, "urgency_score": 0.15 }
+  }
+]

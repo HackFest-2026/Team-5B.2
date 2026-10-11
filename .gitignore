@@ -1,0 +1,11 @@
+node_modules
+dist
+*.local
+.vite
+# Python backend
+backend/.venv
+__pycache__/
+*.pyc
+.pytest_cache
+backend/data/
+.env

@@ -1,0 +1,40 @@
+{
+  "dataset": "domain_agnostic_purchase_behavior",
+  "version": "2.0.0",
+  "synthetic": true,
+  "n_rows": 400000,
+  "n_quotes": 80000,
+  "n_products": 500,
+  "n_customers": 2000,
+  "n_candidates_per_quote": 5,
+  "purchase_rate": 0.65931,
+  "features": {
+    "price_features": [
+      "price_ratio",
+      "log_price_ratio",
+      "price_vs_competitor",
+      "margin_ratio",
+      "price_rank_normalized"
+    ],
+    "customer_features": [
+      "customer_sensitivity",
+      "customer_loyalty_score"
+    ],
+    "market_features": [
+      "urgency_score",
+      "scarcity_score",
+      "demand_pressure",
+      "competitor_density",
+      "is_promotion_active",
+      "time_decay_factor"
+    ],
+    "value_features": [
+      "perceived_value_gap"
+    ]
+  },
+  "target": "purchased",
+  "leakage_excluded": [
+    "true_purchase_probability"
+  ],
+  "domain_specific_attributes": "NONE \u2014 fully domain agnostic"
+}

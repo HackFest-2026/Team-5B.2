@@ -1,0 +1,66 @@
+{
+  "domain": {
+    "id": "hospitality",
+    "name": "Hospitality",
+    "description": "Synthetic demo data: city hotel rooms priced per night. Inventory and competitor values are illustrative, not a live market feed.",
+    "currency": "INR",
+    "output_unit": { "label": "INR per night", "prefix": "₹", "suffix": " /night", "decimals": 0 },
+    "product_noun": "Room type",
+    "pipeline": ["demand", "stay", "customer", "channel"],
+    "attributes": [
+      { "key": "check_in", "label": "Check-in date", "type": "date", "source": "request", "customer_input": true, "required": true },
+      { "key": "nights", "label": "Nights", "type": "number", "source": "request", "customer_input": true, "default": 2, "min": 1, "max": 30, "stage": "stay" },
+      { "key": "channel", "label": "Booking channel", "type": "enum", "source": "request", "customer_input": true, "allowed_values": ["Direct", "OTA", "Corporate"], "default": "Direct", "stage": "channel" },
+      { "key": "occupancy", "label": "Occupancy", "type": "number", "source": "inventory", "unit": "%", "min": 0, "max": 100, "default": 70, "semantic": "capacityUtilization", "normalize": { "min": 0, "max": 100 }, "stage": "demand" },
+      { "key": "demand_index", "label": "Demand index", "type": "number", "source": "inventory", "min": 0, "max": 100, "default": 50, "semantic": "demandPressure", "normalize": { "min": 0, "max": 100, "target_range": [0.2, 2.0] }, "stage": "demand", "description": "0 = very quiet, 50 = normal, 100 = peak" },
+      { "key": "competitor_rate", "label": "Competitor rate", "type": "number", "source": "inventory", "unit": "INR", "semantic": "competitorPrice" },
+      { "key": "lead_time_days", "label": "Days until check-in", "type": "number", "source": "computed", "expression": "daysBetween(as_of, check_in)", "semantic": "urgency", "normalize": { "min": 0, "max": 60, "invert": true }, "stage": "stay" },
+      { "key": "is_weekend", "label": "Weekend check-in", "type": "boolean", "source": "computed", "expression": "isWeekend(check_in)", "stage": "demand" },
+      { "key": "loyalty_tier", "label": "Loyalty tier", "type": "enum", "source": "profile", "allowed_values": ["Standard", "Silver", "Gold", "Platinum"], "default": "Standard", "stage": "customer" },
+      { "key": "loyalty_score", "label": "Loyalty score", "type": "number", "source": "profile", "min": 0, "max": 100, "default": 0, "semantic": "customerLoyalty", "normalize": { "min": 0, "max": 100 } }
+    ],
+    "personas": [
+      {
+        "id": "business_traveller",
+        "name": "Business traveller",
+        "description": "Books close to the date, values location and flexibility over price.",
+        "preferences": ["short notice", "flexible cancellation"],
+        "share": 0.35,
+        "cohort": [
+          { "trait": "need_intensity", "op": "set_range", "low": 1.6, "high": 2.4 },
+          { "trait": "budget_ratio", "op": "multiply", "value": 1.5 }
+        ],
+        "ml_overrides": { "customer_sensitivity": 0.3, "customer_loyalty_score": 0.5, "urgency_score": 0.8 }
+      }
+    ],
+    "products": [
+      { "id": "STD", "name": "Standard Room", "base_price": 4500, "cost": 1800, "previous_price": 4500, "inventory": { "occupancy": 78, "demand_index": 55, "competitor_rate": 4700 } },
+      { "id": "DLX", "name": "Deluxe Room", "base_price": 6500, "cost": 2500, "previous_price": 6800, "inventory": { "occupancy": 88, "demand_index": 76, "competitor_rate": 6900 } },
+      { "id": "STE", "name": "Suite", "base_price": 12000, "cost": 4200, "previous_price": 12000, "inventory": { "occupancy": 55, "demand_index": 28, "competitor_rate": 11500 } }
+    ],
+    "defaults": { "customerSensitivity": 0.5 }
+  },
+  "strategy": {
+    "domain_id": "hospitality",
+    "name": "Occupancy-led room pricing",
+    "objective_text": "Increase prices when demand is high and occupancy is above 80%. Offer a discount when demand is low, but never price below the minimum acceptable margin. Limit the total price increase to 20%.",
+    "rules": [
+      { "id": "HOS-DEM-HI", "name": "High demand uplift", "condition": { "all": [ { "attr": "demand_index", "op": ">=", "value": 70 }, { "attr": "occupancy", "op": ">", "value": 80 } ] }, "action": { "type": "percent", "value": 12 }, "priority": 10, "stage": "demand", "customer_message": "High demand for your dates." },
+      { "id": "HOS-DEM-LO", "name": "Low demand stimulus", "condition": { "attr": "demand_index", "op": "<", "value": 30 }, "action": { "type": "percent", "value": -8 }, "priority": 20, "stage": "demand", "customer_message": "Special rate for quieter dates." },
+      { "id": "HOS-WKND", "name": "Weekend premium", "condition": { "attr": "is_weekend", "op": "==", "value": true }, "action": { "type": "percent", "value": 6 }, "priority": 30, "stage": "demand", "customer_message": "Weekend stay." },
+      { "id": "HOS-EARLY", "name": "Early booking", "condition": { "attr": "lead_time_days", "op": ">=", "value": 30 }, "action": { "type": "percent", "value": -10 }, "priority": 10, "stage": "stay", "customer_message": "Early booking discount." },
+      { "id": "HOS-LONG", "name": "Long stay", "condition": { "attr": "nights", "op": ">=", "value": 5 }, "action": { "type": "percent", "value": -7 }, "priority": 20, "stage": "stay", "customer_message": "Long-stay discount." },
+      { "id": "HOS-LOYAL", "name": "Elite member discount", "condition": { "attr": "loyalty_tier", "op": "in", "value": ["Gold", "Platinum"] }, "action": { "type": "percent", "value": -5 }, "priority": 10, "stage": "customer", "customer_message": "Member discount applied." },
+      { "id": "HOS-OTA", "name": "Third-party channel fee", "condition": { "attr": "channel", "op": "==", "value": "OTA" }, "action": { "type": "percent", "value": 10 }, "priority": 10, "stage": "channel" },
+      { "id": "HOS-CORP", "name": "Corporate rate", "condition": { "attr": "channel", "op": "==", "value": "Corporate" }, "action": { "type": "percent", "value": -8 }, "priority": 10, "stage": "channel", "customer_message": "Corporate rate." }
+    ],
+    "constraints": [
+      { "type": "margin_floor", "value": 25 },
+      { "type": "max_increase", "value": 20 },
+      { "type": "max_discount", "value": 30 },
+      { "type": "rounding", "value": 50 }
+    ],
+    "conflict_policy": { "mode": "stack", "combine": "multiplicative", "max_total_adjustment_pct": 25 },
+    "optimizer_policy": { "objective": "max_expected_profit", "conversion_floor": 0.10 }
+  }
+}

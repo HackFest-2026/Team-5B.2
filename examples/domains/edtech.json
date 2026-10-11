@@ -1,0 +1,49 @@
+{
+  "domain": {
+    "id": "edtech",
+    "name": "EdTech Tutoring",
+    "description": "Synthetic demo data: online tutoring sessions priced per session. Availability and demand values are illustrative, not a live feed.",
+    "currency": "INR",
+    "output_unit": { "label": "INR per session", "prefix": "₹", "suffix": " /session", "decimals": 0 },
+    "product_noun": "Session type",
+    "pipeline": ["supply", "timing", "student"],
+    "attributes": [
+      { "key": "tutor_availability", "label": "Tutor availability", "type": "number", "source": "inventory", "unit": "%", "min": 0, "max": 100, "default": 60, "semantic": "scarcity", "normalize": { "min": 0, "max": 100, "invert": true }, "stage": "supply" },
+      { "key": "demand_level", "label": "Demand level", "type": "number", "source": "inventory", "min": 0, "max": 100, "default": 50, "semantic": "demandPressure", "normalize": { "min": 0, "max": 100, "target_range": [0.2, 2.0] }, "stage": "supply" },
+      { "key": "session_date", "label": "Session date", "type": "date", "source": "request", "customer_input": true, "required": true },
+      { "key": "session_hour", "label": "Start hour (0-23)", "type": "number", "source": "request", "customer_input": true, "min": 0, "max": 23, "default": 18, "stage": "timing" },
+      { "key": "days_until_session", "label": "Days until session", "type": "number", "source": "computed", "expression": "daysBetween(as_of, session_date)", "semantic": "urgency", "normalize": { "min": 0, "max": 14, "invert": true }, "stage": "timing" },
+      { "key": "student_tier", "label": "Student tier", "type": "enum", "source": "profile", "allowed_values": ["new", "returning", "premium"], "default": "new", "stage": "student" },
+      { "key": "sessions_completed", "label": "Sessions completed", "type": "number", "source": "profile", "min": 0, "max": 500, "default": 0, "semantic": "customerLoyalty", "normalize": { "min": 0, "max": 40 } },
+      { "key": "promo_code_active", "label": "Promo code", "type": "boolean", "source": "request", "customer_input": true, "default": false, "semantic": "promotionActive", "stage": "student" }
+    ],
+    "products": [
+      { "id": "ONE-ON-ONE", "name": "1:1 Math tutoring (60 min)", "base_price": 1200, "cost": 500, "previous_price": 1200, "inventory": { "tutor_availability": 40, "demand_level": 65 } },
+      { "id": "EXAM-PREP", "name": "Exam prep intensive (90 min)", "base_price": 2000, "cost": 850, "previous_price": 2000, "inventory": { "tutor_availability": 18, "demand_level": 85 } },
+      { "id": "GROUP-CODE", "name": "Group coding class (60 min)", "base_price": 600, "cost": 220, "previous_price": 600, "inventory": { "tutor_availability": 75, "demand_level": 30 } }
+    ],
+    "defaults": { "customerSensitivity": 0.6, "competitorDensity": 0.5 }
+  },
+  "strategy": {
+    "domain_id": "edtech",
+    "name": "Availability-aware session pricing",
+    "objective_text": "Charge a little more when tutors are scarce, demand is high or the session is booked at short notice. Reward advance bookings and returning students. Never discount more than 15%.",
+    "rules": [
+      { "id": "E-SCARCE", "name": "Limited tutor availability", "condition": { "attr": "tutor_availability", "op": "<", "value": 25 }, "action": { "type": "percent", "value": 10 }, "priority": 10, "stage": "supply", "customer_message": "Limited tutor availability." },
+      { "id": "E-SURGE", "name": "Demand surge", "condition": { "all": [ { "attr": "demand_level", "op": ">=", "value": 75 }, { "attr": "tutor_availability", "op": "<", "value": 50 } ] }, "action": { "type": "percent", "value": 8 }, "priority": 20, "stage": "supply", "customer_message": "High demand for this session type." },
+      { "id": "E-LASTMIN", "name": "Short-notice booking", "condition": { "attr": "days_until_session", "op": "<=", "value": 1 }, "action": { "type": "percent", "value": 5 }, "priority": 10, "stage": "timing", "customer_message": "Short-notice booking." },
+      { "id": "E-EARLY", "name": "Advance booking", "condition": { "attr": "days_until_session", "op": ">=", "value": 7 }, "action": { "type": "percent", "value": -5 }, "priority": 20, "stage": "timing", "customer_message": "Advance booking discount." },
+      { "id": "E-PEAK", "name": "Peak-hour slot", "condition": { "attr": "session_hour", "op": "between", "value": [17, 21] }, "action": { "type": "fixed", "value": 50 }, "priority": 30, "stage": "timing", "customer_message": "Peak-hour slot." },
+      { "id": "E-RETURNING", "name": "Returning student", "condition": { "attr": "student_tier", "op": "in", "value": ["returning", "premium"] }, "action": { "type": "percent", "value": -8 }, "priority": 10, "stage": "student", "customer_message": "Returning student discount." },
+      { "id": "E-PROMO", "name": "Promo code", "condition": { "attr": "promo_code_active", "op": "==", "value": true }, "action": { "type": "percent", "value": -10 }, "priority": 20, "stage": "student", "customer_message": "Promo code applied." }
+    ],
+    "constraints": [
+      { "type": "floor", "value": 400 },
+      { "type": "max_discount", "value": 15 },
+      { "type": "max_increase", "value": 20 },
+      { "type": "rounding", "value": 10 }
+    ],
+    "conflict_policy": { "mode": "stack", "combine": "additive", "max_total_adjustment_pct": 30 },
+    "optimizer_policy": { "objective": "max_expected_profit", "conversion_floor": 0.10 }
+  }
+}

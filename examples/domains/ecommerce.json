@@ -1,0 +1,51 @@
+{
+  "domain": {
+    "id": "ecommerce",
+    "name": "E-commerce",
+    "description": "Synthetic demo data: consumer electronics sold online, priced per unit. Stock, demand and competitor prices are illustrative, not a live feed.",
+    "currency": "USD",
+    "output_unit": { "label": "USD per unit", "prefix": "$", "suffix": "", "decimals": 2 },
+    "product_noun": "Product",
+    "pipeline": ["market", "inventory", "basket", "customer"],
+    "attributes": [
+      { "key": "demand_index", "label": "Demand index", "type": "number", "source": "inventory", "min": 0, "max": 100, "default": 50, "semantic": "demandPressure", "normalize": { "min": 0, "max": 100, "target_range": [0.2, 2.0] }, "stage": "market", "description": "0 = very quiet, 50 = normal, 100 = peak" },
+      { "key": "competitor_price", "label": "Lowest competitor price", "type": "number", "source": "inventory", "unit": "USD", "semantic": "competitorPrice", "stage": "market" },
+      { "key": "competitor_gap_pct", "label": "Competitor gap vs our base (%)", "type": "number", "source": "computed", "expression": "(competitor_price - base_price) / base_price * 100", "stage": "market", "description": "Negative = competitor is cheaper than our base price" },
+      { "key": "stock_units", "label": "Units in stock", "type": "number", "source": "inventory", "min": 0, "max": 100000, "default": 200, "semantic": "scarcity", "normalize": { "min": 0, "max": 500, "invert": true }, "stage": "inventory" },
+      { "key": "promo_active", "label": "Promotion running", "type": "boolean", "source": "inventory", "default": false, "semantic": "promotionActive", "stage": "inventory" },
+      { "key": "quantity", "label": "Quantity in basket", "type": "number", "source": "request", "customer_input": true, "min": 1, "max": 20, "default": 1, "stage": "basket" },
+      { "key": "channel", "label": "Sales channel", "type": "enum", "source": "request", "customer_input": true, "allowed_values": ["web", "app", "marketplace"], "default": "web", "stage": "basket" },
+      { "key": "membership", "label": "Membership", "type": "enum", "source": "profile", "allowed_values": ["none", "plus"], "default": "none", "stage": "customer" },
+      { "key": "orders_last_year", "label": "Orders in the last year", "type": "number", "source": "profile", "min": 0, "max": 1000, "default": 0, "semantic": "customerLoyalty", "normalize": { "min": 0, "max": 24 } }
+    ],
+    "products": [
+      { "id": "EARBUDS-X", "name": "Wireless noise-cancelling earbuds", "base_price": 79.0, "cost": 38.0, "previous_price": 79.0, "inventory": { "demand_index": 72, "competitor_price": 74.99, "stock_units": 40 } },
+      { "id": "WATCH-S", "name": "Fitness smartwatch", "base_price": 199.0, "cost": 112.0, "previous_price": 199.0, "inventory": { "demand_index": 55, "competitor_price": 209.0, "stock_units": 320 } },
+      { "id": "CAM-4K", "name": "4K action camera", "base_price": 249.0, "cost": 150.0, "previous_price": 259.0, "inventory": { "demand_index": 30, "competitor_price": 229.0, "stock_units": 610, "promo_active": true } }
+    ],
+    "defaults": { "customerSensitivity": 0.65, "competitorDensity": 0.85 }
+  },
+  "strategy": {
+    "domain_id": "ecommerce",
+    "name": "Competitive online pricing",
+    "objective_text": "Stay close to the cheapest competitor without destroying margin. Charge a little more when demand is high and stock is low, clear slow-moving stock, reward members and multi-unit baskets, and add a fee for marketplace orders. Keep at least a 20% gross margin and never move more than 15% above base.",
+    "rules": [
+      { "id": "EC-MATCH", "name": "Competitor is cheaper", "condition": { "attr": "competitor_gap_pct", "op": "<", "value": -3 }, "action": { "type": "percent", "value": -4 }, "priority": 10, "stage": "market", "customer_message": "Price matched to the market." },
+      { "id": "EC-HIDEMAND", "name": "High demand", "condition": { "attr": "demand_index", "op": ">=", "value": 70 }, "action": { "type": "percent", "value": 5 }, "priority": 20, "stage": "market", "customer_message": "Popular right now." },
+      { "id": "EC-LOWSTOCK", "name": "Low stock", "condition": { "attr": "stock_units", "op": "<", "value": 50 }, "action": { "type": "percent", "value": 4 }, "priority": 10, "stage": "inventory", "customer_message": "Limited stock." },
+      { "id": "EC-CLEAR", "name": "Clear slow stock", "condition": { "all": [ { "attr": "stock_units", "op": ">", "value": 500 }, { "attr": "demand_index", "op": "<", "value": 40 } ] }, "action": { "type": "percent", "value": -8 }, "priority": 20, "stage": "inventory", "customer_message": "Clearance price." },
+      { "id": "EC-PROMO", "name": "Promotion", "condition": { "attr": "promo_active", "op": "==", "value": true }, "action": { "type": "percent", "value": -5 }, "priority": 30, "stage": "inventory", "customer_message": "Promotional price." },
+      { "id": "EC-BUNDLE", "name": "Multi-unit basket", "condition": { "attr": "quantity", "op": ">=", "value": 3 }, "action": { "type": "percent", "value": -3 }, "priority": 10, "stage": "basket", "customer_message": "Multi-buy discount." },
+      { "id": "EC-MKT", "name": "Marketplace fee", "condition": { "attr": "channel", "op": "==", "value": "marketplace" }, "action": { "type": "percent", "value": 4 }, "priority": 20, "stage": "basket" },
+      { "id": "EC-PLUS", "name": "Member price", "condition": { "attr": "membership", "op": "==", "value": "plus" }, "action": { "type": "percent", "value": -5 }, "priority": 10, "stage": "customer", "customer_message": "Member price." }
+    ],
+    "constraints": [
+      { "type": "margin_floor", "value": 20 },
+      { "type": "max_increase", "value": 15 },
+      { "type": "max_discount", "value": 25 },
+      { "type": "rounding", "value": 0.5 }
+    ],
+    "conflict_policy": { "mode": "stack", "combine": "multiplicative", "max_total_adjustment_pct": 20 },
+    "optimizer_policy": { "objective": "max_expected_profit", "conversion_floor": 0.10 }
+  }
+}

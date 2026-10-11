@@ -1,0 +1,17 @@
+{
+  "population_size": 1000,
+  "seed": 42,
+  "minimum_simulated_conversion": 0.05,
+  "max_allowed_probability_gap": 0.15,
+  "confidence_level": 0.95,
+  "ranking_tolerance_rank_drop": 2,
+  "ranking_tolerance_profit_gap": 0.12,
+  "min_heterogeneity_variance": 0.002,
+  "max_retry_attempts": 3,
+  "scenarios": [
+    "budget_squeeze",
+    "competitor_undercut",
+    "high_urgency",
+    "perceived_value_drop"
+  ]
+}
